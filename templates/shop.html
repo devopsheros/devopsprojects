@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='style.css') }}">
+    <title>Shop</title>
+</head>
+<body class="body">
+    <h1>hi {{ name }}</h1>
+    <div class="container" style="float: right; width: 300px;">
+        <form action="http://127.0.0.1:5000/ticket" method="post">
+            <h3>Buy ticket</h3>
+           <label for="destination">Destination:</label>
+          <input type="text" id="destination" name="buy-deprature" placeholder="where to...">
+          <label for="destination">Destination:</label>
+          <input type="text" id="destination" name="buy-destination" placeholder="where to...">
+          <button type="submit">Search ticket</button>
+       </form>
+    </div>
+    <div class="container" style="float: left; width: 300px;">
+        <form action="http://127.0.0.1:5000/ticket" method="post">
+            <h3>Delete ticket</h3>
+          <label for="destination">Destination:</label>
+          <input type="text" id="destination" name="delete-departure" placeholder="where to...">
+          <label for="destination">Destination:</label>
+          <input type="text" id="destination" name="delete-destination" placeholder="where to...">
+          <button type="submit">Search ticket</button>
+       </form>
+    </div>
+{% if flights|length > 0 %}
+<div class="lower-page">
+<h1>Your Flights</h1>
+<div class="container user-flights">
+<table>
+    {% for flight in flights %}
+    <tr>
+        <th>departure</th>
+        <th>destination</th>
+        <th>departure-time</th>
+        <th>arrival-time</th>
+    </tr>
+    <tr>
+        <td name="departure">{{ flight[0] }}</td>
+        <td name="destination">{{ flight[1] }}</td>
+        <td name="departure_time">{{ flight[2] }}</td>
+        <td name="arrival_time">{{ flight[3] }}</td>
+    </tr>
+    {% endfor %}
+</table>
+</div>
+</div>
+{% endif %}
+</body>
+</html>

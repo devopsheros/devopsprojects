@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='style.css') }}">
+    <title>Ticket</title>
+</head>
+<body class="body">
+{% if action == 'buy' %}
+<h1>Flights</h1>
+<div class="container" >
+    {% for flight in available_flights %}
+<form action="http://127.0.0.1:5000/payment" method="post">
+<table>
+    <tr>
+        <th>departure</th>
+        <th>destination</th>
+        <th>departure-time</th>
+        <th>arrival-time</th>
+        <th>price</th>
+    </tr>
+    <tr>
+        <td name="departure">{{ flight["departure"] }}</td>
+        <input type="hidden" name="departure" value="{{ flight['departure'] }}">
+        <td name="destination">{{ flight["destination"] }}</td>
+        <input type="hidden" name="destination" value="{{ flight['destination'] }}">
+        <td name="departure_time">{{ flight["departure_time"] }}</td>
+        <input type="hidden" name="departure_time" value="{{ flight['departure_time'] }}">
+        <td name="arrival_time">{{ flight["arrival_time"] }}</td>
+        <input type="hidden" name="arrival_time" value="{{ flight['arrival_time'] }}">
+        <td name="price">{{ flight["price"] }}</td>
+        <input type="hidden" name="price" value="{{ flight['price'] }}">
+    </tr>
+</table>
+    <button type="submit" class="purchase">Purchase</button>
+    <br>
+</form>
+    {% endfor %}
+</div>
+{% endif %}
+{% if action == 'delete' %}
+<h1>Flight Cancelation</h1>
+<div class="container">
+<table>
+    <tr>
+        <th>departure</th>
+        <th>destination</th>
+        <th>departure-time</th>
+        <th>arrival-time</th>
+    </tr>
+    <tr>
+        <td name="departure">{{ flight[1] }}</td>
+        <input type="hidden" name="departure" value="{{ flight['delete-departure'] }}">
+        <td name="destination">{{ flight[2] }}</td>
+        <input type="hidden" name="destination" value="{{ flight['delete-destination'] }}">
+        <td name="departure_time">{{ flight[3] }}</td>
+        <input type="hidden" name="departure_time" value="{{ flight['departure_time'] }}">
+        <td name="arrival_time">{{ flight[4] }}</td>
+        <input type="hidden" name="arrival_time" value="{{ flight['arrival_time'] }}">
+    </tr>
+</table>
+</div>
+<br>
+<br>
+<div class="container">
+    <form action="http://127.0.0.1:5000/delete" method="post">
+        <label for="destination">Ticket ID:</label>
+        <input type="text"  name="delete-ticket-id" placeholder="enter ticket ID">
+        <button type="submit">Delete ticket</button>
+    </form>
+</div>
+{% endif %}
+</body>
+</html>

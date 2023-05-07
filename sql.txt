@@ -1,0 +1,95 @@
+CREATE TABLE states (
+    state_code CHAR(2) PRIMARY KEY,
+    state_name VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE tickets (
+  ticket_number VARCHAR(10) NOT NULL,
+  departure VARCHAR(50) NOT NULL,
+  arrival VARCHAR(50) NOT NULL,
+  departure_time TIMESTAMP NOT NULL,
+  arrival_time TIMESTAMP NOT NULL,
+  ticket_price DECIMAL(10,2) NOT NULL
+);
+
+
+INSERT INTO states(state_code,state_name)
+VALUES
+('AL','Alabama'),
+('AK','Alaska'),
+('AZ','Arizona'),
+('AR','Arkansas'),
+('CA','California'),
+('CO','Colorado'),
+('CT','Connecticut'),
+('DC','District of Columbia'),
+('DE','Delaware'),
+('FL','Florida'),
+('GA','Georgia'),
+('HI','Hawaii'),
+('ID','Idaho'),
+('IL','Illinois'),
+('IN','Indiana'),
+('IA','Iowa'),
+('KS','Kansas'),
+('KY','Kentucky'),
+('LA','Louisiana'),
+('ME','Maine'),
+('MD','Maryland'),
+('MA','Massachusetts'),
+('MI','Michigan'),
+('MN','Minnesota'),
+('MS','Mississippi'),
+('MO','Missouri'),
+('MT','Montana'),
+('NE','Nebraska'),
+('NV','Nevada'),
+('NH','New Hampshire'),
+('NJ','New Jersey'),
+('NM','New Mexico'),
+('NY','New York'),
+('NC','North Carolina'),
+('ND','North Dakota'),
+('OH','Ohio'),
+('OK','Oklahoma'),
+('OR','Oregon'),
+('PA','Pennsylvania'),
+('RI','Rhode Island'),
+('SC','South Carolina'),
+('SD','South Dakota'),
+('TN','Tennessee'),
+('TX','Texas'),
+('UT','Utah'),
+('VT','Vermont'),
+('VA','Virginia'),
+('WA','Washington'),
+('WV','West Virginia'),
+('WI','Wisconsin'),
+('WY','Wyoming');
+
+CREATE TABLE flights (
+    id SERIAL PRIMARY KEY,
+    departure_state VARCHAR(255),
+    arrival_state VARCHAR(255),
+    departure_time TIMESTAMP,
+    arrival_time TIMESTAMP,
+    price DECIMAL(10,2)
+);
+
+ALTER TABLE flight_tickets ADD COLUMN users VARCHAR(50)
+
+
+INSERT INTO flights (departure_state, arrival_state, departure_time, arrival_time, price)
+SELECT s1.state_name, s2.state_name,
+    (NOW() + INTERVAL '1 day' * FLOOR(RANDOM() * 30))::DATE + TIME '00:00:00' + INTERVAL '1 hour' * FLOOR(RANDOM() * 24),
+    (NOW() + INTERVAL '1 day' * FLOOR(RANDOM() * 30) + INTERVAL '1 day' + INTERVAL '1 hour' * FLOOR(RANDOM() * 24))::DATE + TIME '00:00:00' + INTERVAL '1 hour' * FLOOR(RANDOM() * 24),
+    CAST((RANDOM() * 500 + 50) AS NUMERIC(10,2))
+FROM states s1
+CROSS JOIN states s2
+WHERE s1.state_name != s2.state_name
+AND (NOW() + INTERVAL '1 day' * FLOOR(RANDOM() * 30))::DATE + TIME '00:00:00' + INTERVAL '1 hour' * FLOOR(RANDOM() * 24) <
+    (NOW() + INTERVAL '1 day' * FLOOR(RANDOM() * 30) + INTERVAL '1 day' + INTERVAL '1 hour' * FLOOR(RANDOM() * 24))::DATE + TIME '00:00:00' + INTERVAL '1 hour' * FLOOR(RANDOM() * 24);
+
+UPDATE flights
+SET arrival_time = departure_time, departure_time = arrival_time
+WHERE arrival_time < departure_time;
