@@ -1,13 +1,13 @@
 from flask import Flask, render_template, request, session
-import psycopg2, random, string, secrets
-from datetime import datetime
+import psycopg2, random, string, secrets, os
+
 
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(16)
 
-
-conn = psycopg2.connect(database="flights", user='postgres', password='rr01ar99', host='127.0.0.1',port='5432')
+print(os.environ['POSTGRES_DB'])
+conn = psycopg2.connect(database=f"{os.environ['POSTGRES_DB']}", user=f"{os.environ['POSTGRES_USER']}", password=f"{os.environ['POSTGRES_PASSWORD']}", host=f"{os.environ['POSTGRES_HOST']}",port='5432')
 cursor = conn.cursor()
 
 
