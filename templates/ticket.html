@@ -13,7 +13,7 @@
 <h1>Flights</h1>
 <div class="container" >
     {% for flight in available_flights %}
-<form action="http://127.0.0.1:5000/payment" method="post">
+<form action="https://flight-app.devopsheros.com/payment" method="post">
 <table>
     <tr>
         <th>departure</th>
@@ -52,13 +52,13 @@
         <th>arrival-time</th>
     </tr>
     <tr>
-        <td name="departure">{{ flight[1] }}</td>
+        <td name="departure">{{ flight[2] }}</td>
         <input type="hidden" name="departure" value="{{ flight['delete-departure'] }}">
-        <td name="destination">{{ flight[2] }}</td>
+        <td name="destination">{{ flight[3] }}</td>
         <input type="hidden" name="destination" value="{{ flight['delete-destination'] }}">
-        <td name="departure_time">{{ flight[3] }}</td>
+        <td name="departure_time">{{ flight[4] }}</td>
         <input type="hidden" name="departure_time" value="{{ flight['departure_time'] }}">
-        <td name="arrival_time">{{ flight[4] }}</td>
+        <td name="arrival_time">{{ flight[5] }}</td>
         <input type="hidden" name="arrival_time" value="{{ flight['arrival_time'] }}">
     </tr>
 </table>
@@ -66,7 +66,7 @@
 <br>
 <br>
 <div class="container">
-    <form action="http://127.0.0.1:5000/delete" method="post">
+    <form action="https://flight-app.devopsheros.com/delete" method="post">
         <label for="destination">Ticket ID:</label>
         <input type="text"  name="delete-ticket-id" placeholder="enter ticket ID">
         <button type="submit">Delete ticket</button>

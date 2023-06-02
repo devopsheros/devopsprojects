@@ -1,0 +1,74 @@
+#build and pushing your image
+dokcer build -t {YOUR_IMAGE_REPO}:{YOUR_IMAGE_TAG} .
+docker push {YOUR_IMAGE_REPO}:{YOUR_IMAGE_TAG}
+
+#setting up secret for postgres and flask credentials
+kubectl create secret generic creds --from-literal=username={USER} --from-literal=password={PASS} --from-literal=host={HOST} --from-literal=db={DB}
+
+#setting up the postgres statefulset
+kubeclt apply -f postgres.yaml
+kubectl exec -it {POSTGRES_POD_NAME} bash
+
+#make requests available on port 5432
+echo "port = 5432" >> /var/lib/postgresql/data/postgresql.conf
+
+#setting up the flask deployment
+kubectl apply -f flask.yaml
+
+#checking the app locally
+kubectl port-forward svc/{YOUR_FLASK_SERVICE} 5000
+
+
+##expose to public
+
+#create cloudDNS and cluster
+gcloud dns managed-zones create flight-app --description=flight-app-zone --dns-name=devopsheros.com --visibility=public
+gcloud container clusters create flight-app-cluster --num-nodes=1 --zone=us-central1-a
+
+#add dns records
+gcloud dns record-sets transaction start --zone=flight-app
+gcloud dns record-sets transaction add --name=devopsheros.com --type=A --ttl=300 --zone=flight-app --rrdatas={YOUR_IP_ADDRESS}
+gcloud dns record-sets transaction add --name=flight-app.devopsheros.com --type=A --ttl=300 --zone=flight-app --rrdatas={YOUR_IP_ADDRESS}
+gcloud dns record-sets transaction add --name=www.devopsheros.com --type=CNAME --ttl=300 --zone=flight-app --cname=devopsheros.com
+gcloud dns record-sets transaction add --name=www.flight-app.devopsheros.com --type=CNAME --ttl=300 --zone=flight-app --cname=flight-app.devopsheros.com
+gcloud dns record-sets transaction execute --zone=flight-app
+
+#add ingress and ingress controller
+kubectl apply -f ingress.yaml
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm install my-ingress-nginx ingress-nginx/ingress-nginx --version 4.6.1
+
+
+##creating https URL
+
+#install cert-manager
+helm repo add jetstack https://charts.jetstack.io
+helm repo update
+helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.12.0 --set installCRDs=true
+
+#setting service account
+gcloud iam service-accounts create dns01-solver --display-name "dns01-solver"
+gcloud projects add-iam-policy-binding devops-project-387209 --member serviceAccount:dns01-solver@devops-project-387209.iam.gserviceaccount.com  --role roles/dns.admin
+gcloud iam service-accounts keys create key.json --iam-account dns01-solver@devops-project-387209.iam.gserviceaccount.com
+
+#creating secret to hold the service account key and removing the file
+kubectl create secret generic dns-reslover-key --from-file=key.json={PATH_TO_KEY}
+rm key.json
+
+#applying for certificate
+kubectl apply -f issuer.yaml
+kubectl apply -f ingress.yaml
+
+#service account for terraform
+gcloud iam service-accounts create terraform --description="terraform service account"
+gcloud projects add-iam-policy-binding devops-project-387209 --member=serviceAccount:terraform@devops-project-387209.iam.gserviceaccount.com --role=roles/editor
+gcloud iam service-accounts keys create key.json --iam-account=terraform@devops-project-387209.iam.gserviceaccount.com
+
+# bucket for terraform backend
+gcloud storage buckets create gs://flight-app-bucket
+
+
+# terraform
+terraform init -backend-config "bucket=flight-app-bucket" -backend-config "prefix=state" -backend-config "credentials=C:\Users\Alon\PycharmProjects\project1\venv\flight-app\key.json"
+terraform plan -var-file=values.tfvars
+terraform apply -var-file=values.tfvars
