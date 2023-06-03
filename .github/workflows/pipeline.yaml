@@ -1,1 +1,51 @@
+name: application
+
+on:
+  push:
+    branches:
+      - 'main'
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      branches:
+        description: 'Branch to deploy'
+        required: true
+
+jobs:
+  infrastructure:
+    name: 'terraform'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: init
+        run: terraform init
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+      - name: plan
+        id: terraform_plan
+        run: |
+          terraform plan -var-file=terraform/values.tfvars
+          echo ${{ steps.terraform_plan.outputs.stdout }}
+          echo ${{ steps.terraform_plan.outputs.stderr }}
+          echo ${{ steps.terraform_plan.outputs.exitcode }}
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+      - name: apply
+        id: terraform_apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'main'
+        run: |
+          terraform apply  -var-file=terraform/values.tfvars -auto-approve
+          echo ${{ steps.terraform_apply.outputs.stdout }}
+          echo ${{ steps.terraform_apply.outputs.stderr }}
+          echo ${{ steps.terraform_apply.outputs.exitcode }}
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
