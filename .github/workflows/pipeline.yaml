@@ -29,6 +29,7 @@ jobs:
       - name: create terraofrm credentials
         run: |
           gcloud iam service-accounts keys create key.json --iam-account=${{ secrets.SA_EMAIL }}
+          ls
 
       - name: move to terraform directory
         run: | 
