@@ -41,12 +41,11 @@ jobs:
 
       - name: init
         run: terraform init -backend-config "bucket=${{ secrets.BUCKETS_NAME }}" -backend-config "prefix=${{ secrets.BUCKET_PREFIX }}" -backend-config "credentials=../key.json"
-        env:
-          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
       - name: plan
         id: terraform_plan
         run: |
+          ls
           terraform plan -var-file=values.tfvars
           echo ${{ steps.terraform_plan.outputs.stdout }}
           echo ${{ steps.terraform_plan.outputs.stderr }}
