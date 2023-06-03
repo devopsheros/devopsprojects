@@ -32,7 +32,7 @@ jobs:
       - name: init
         run: |
           cd terraform
-          terraform init -backend-config "bucket=${{ secrets.BUCKETS_NAME }}" -backend-config "prefix=${{ secrets.BUCKET_PREFIX }}" -backend-config "credentials=${{ env.GOOGLE_APPLICATION_CREDENTIALS }}"
+          terraform init -backend-config "bucket=${{ secrets.BUCKETS_NAME }}" -backend-config "prefix=${{ secrets.BUCKET_PREFIX }}" -backend-config "credentials=${{ env.GOOGLE_APPLICATION_CREDENTIALS }}" -reconfigure
 
       - name: plan
         id: terraform_plan
@@ -82,6 +82,6 @@ jobs:
 
       - name: create terraofrm credentials
         run: |
-          KUBE_CONFIG=$(gcloud container clusters get-credentials ${{ secrets.CLUSTER_NAME }} --location us-central1-a)
+          KUBE_CONFIG=$(gcloud  container clusters get-credentials ${{ secrets.CLUSTER_NAME }} --location us-central1-a --access-token-file ${{ env.GOOGLE_APPLICATION_CREDENTIALS }})
           echo $KUBE_CONFIG
 
