@@ -20,16 +20,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: move to terraform module
-        run: |
-           cd terraform
-           ls
+      - id: auth
+          name: Authenticate to Google Cloud
+          uses: google-github-actions/auth@v1
+          with:
+            credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
 
+      - name: create terraofrm credentials
+        run: |
+          gcloud iam service-accounts keys create key.json --iam-account=${{ secrets.SA_EMAIL }}
+
+      - name: move to terraform directory
+        run: | 
+          cd terraform
+          pwd
+          
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
 
       - name: init
-        run: terraform init
+        run: terraform init -backend-config "bucket=${{ secrets.BUCKETS_NAME }}" -backend-config "prefix=${{ secrets.BUCKET_PREFIX }}" -backend-config "credentials=../key.json"
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
