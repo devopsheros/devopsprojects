@@ -2,11 +2,11 @@
 bucket_config = {
   bucket       = "flight-app-bucket"
   prefix       = "state"
-  credentials  = "C:\\Users\\Alon\\PycharmProjects\\project1\\venv\\flight-app\\key.json"
+  credentials  = "/home/runner/work/devopsprojects/devopsprojects/key.json"
 }
 
 // gcp
-key_path = "C:\\Users\\Alon\\PycharmProjects\\project1\\venv\\flight-app\\key.json"
+key_path = "/home/runner/work/devopsprojects/devopsprojects/key.json"
 gcp_project = "devops-project-387209"
 
 // k8s cluster
