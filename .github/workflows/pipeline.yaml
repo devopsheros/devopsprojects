@@ -31,27 +31,23 @@ jobs:
           gcloud iam service-accounts keys create key.json --iam-account=${{ secrets.SA_EMAIL }}
           ls
 
-      - name: move to terraform directory
-        run: | 
-          cd terraform
-          pwd
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
 
       - name: init
-        run: terraform init -backend-config "bucket=${{ secrets.BUCKETS_NAME }}" -backend-config "prefix=${{ secrets.BUCKET_PREFIX }}" -backend-config "credentials=../key.json"
+        run: |
+          cd terraform
+          terraform init -backend-config "bucket=${{ secrets.BUCKETS_NAME }}" -backend-config "prefix=${{ secrets.BUCKET_PREFIX }}" -backend-config "credentials=../key.json"
 
       - name: plan
         id: terraform_plan
         run: |
-          ls
+          cd terraform
           terraform plan -var-file=values.tfvars
           echo ${{ steps.terraform_plan.outputs.stdout }}
           echo ${{ steps.terraform_plan.outputs.stderr }}
           echo ${{ steps.terraform_plan.outputs.exitcode }}
-        env:
-          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
       - name: apply
         id: terraform_apply
@@ -61,6 +57,3 @@ jobs:
           echo ${{ steps.terraform_apply.outputs.stdout }}
           echo ${{ steps.terraform_apply.outputs.stderr }}
           echo ${{ steps.terraform_apply.outputs.exitcode }}
-        env:
-          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
-
