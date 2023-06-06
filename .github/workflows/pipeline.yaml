@@ -20,25 +20,29 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - id: auth
-        name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v1
-        with:
-          credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
-
-      - name: create terraofrm credentials
-        run: |
-          gcloud iam service-accounts keys create key.json --iam-account=${{ secrets.SA_EMAIL }}
-          ls
-
-
-      - name: Setup Terraform
+      - name: Set up Terraform
         uses: hashicorp/setup-terraform@v1
 
-      - name: init
+      - name: Create Terraform backend configuration
+          run: |
+            cd terraform
+            echo 'terraform {' >> backend.tf
+            echo '  backend "gcs" {' >> backend.tf
+            echo '    bucket  = "${{ secrets.BUCKETS_NAME }}"' >> backend.tf
+            echo '    prefix  = "${{ secrets.BUCKET_PREFIX }}""' >> backend.tf
+            echo '    credentials = "../credentials.json"' >> backend.tf
+            echo '  }' >> backend.tf
+            echo '}' >> backend.tf
+
+      - name: Create credentials file
+        run: |
+          echo "${{ secrets.GCP_SA_KEY }}" > credentials.json
+          cat credentials.json
+
+      - name: Fetch remote state
         run: |
           cd terraform
-          terraform init -backend-config "bucket=${{ secrets.BUCKETS_NAME }}" -backend-config "prefix=${{ secrets.BUCKET_PREFIX }}" -backend-config "credentials=../key.json"
+          terraform init -backend-config=backend.tf
 
       - name: plan
         id: terraform_plan
