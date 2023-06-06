@@ -1,9 +1,3 @@
-// bucket
-bucket_config = {
-  bucket       = "flight-app-bucket"
-  prefix       = "state"
-  credentials  = "/home/runner/work/devopsprojects/devopsprojects/key.json"
-}
 
 // gcp
 key_path = "/home/runner/work/devopsprojects/devopsprojects/key.json"

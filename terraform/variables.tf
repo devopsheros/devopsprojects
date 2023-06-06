@@ -1,11 +1,3 @@
-// bucket config
-variable "bucket_config" {
-  type = object({
-    bucket      = string
-    prefix      = string
-    credentials = string
-  })
-}
 
 // gcp config
 variable "key_path" {

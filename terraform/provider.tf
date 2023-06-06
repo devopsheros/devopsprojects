@@ -1,8 +1,7 @@
 terraform {
   backend "gcs" {
-    bucket = var.bucket_config["bucket"]
-    prefix = var.bucket_config["prefix"]
-    credentials = file(var.bucket_config["credentials"])
+    bucket = "flight-app-bucket"
+    prefix = "state"
   }
   required_providers {
     google = {
