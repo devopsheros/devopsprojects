@@ -82,6 +82,6 @@ jobs:
 
       - name: create terraofrm credentials
         run: |
-          KUBE_CONFIG=$(gcloud  container clusters get-credentials ${{ secrets.CLUSTER_NAME }} --location us-central1-a --access-token-file ${{ env.GOOGLE_APPLICATION_CREDENTIALS }})
+          KUBE_CONFIG=$(gcloud  container clusters get-credentials ${{ secrets.CLUSTER_NAME }} --location us-central1-a )
           echo $KUBE_CONFIG
 
