@@ -52,36 +52,4 @@ jobs:
           echo ${{ steps.terraform_apply.outputs.stderr }}
           echo ${{ steps.terraform_apply.outputs.exitcode }}
 
-  docker:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Build and push
-        uses: docker/build-push-action@v4
-        with:
-          push: true
-          tags: devopsheros137/flight-app:flask
-
-  kubernetes:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - id: auth
-        name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v1
-        with:
-          credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
-
-      - name: create terraofrm credentials
-        run: |
-          KUBE_CONFIG=$(gcloud  container clusters get-credentials ${{ secrets.CLUSTER_NAME }} --location us-central1-a )
-          echo $KUBE_CONFIG
-
+  
