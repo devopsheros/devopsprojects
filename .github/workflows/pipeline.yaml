@@ -32,6 +32,12 @@ jobs:
           echo '    prefix  = "${{ secrets.BUCKET_PREFIX }}""' >> backend.tf
           echo '    credentials = "../credentials.json"' >> backend.tf
           echo '  }' >> backend.tf
+          echo '  required_providers {' >> backend.tf
+          echo '     google = {' >> backend.tf
+          echo '       source  = "hashicorp/google"' >> backend.tf
+          echo '       version = "4.66.0"' >> backend.tf
+          echo '     }' >> backend.tf
+          echo '  }' >> backend.tf
           echo '}' >> backend.tf
           cat backend.tf
 
