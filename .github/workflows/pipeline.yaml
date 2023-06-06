@@ -30,7 +30,7 @@ jobs:
       - name: Fetch remote state
         run: |
           cd terraform
-          terraform init -backend-config="bucket=${{ secrets.BUCKETS_NAME }}" -backend-config="prefix=${{ secrets.BUCKET_PREFIX}}" -backend-config="credentials=../credentials.json"
+          terraform init -backend-config="bucket=${{ secrets.BUCKETS_NAME }}" -backend-config="prefix=${{ secrets.BUCKET_PREFIX}}" -backend-config="credentials=../credentials.json" -reconfigure
 
       - name: plan
         id: terraform_plan
