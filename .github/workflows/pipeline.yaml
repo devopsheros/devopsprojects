@@ -26,17 +26,17 @@ jobs:
       - name: Create Terraform backend configuration
         run: |
           cd terraform
-          echo '  backend "gcs" {' >> backend.tf
+          echo '  backend "gcs" "${{ secrets.LEFT_BRACKET }}"' >> backend.tf
           echo '    bucket  = "${{ secrets.BUCKETS_NAME }}"' >> backend.tf
           echo '    prefix  = "${{ secrets.BUCKET_PREFIX }}"' >> backend.tf
           echo '    credentials = "../credentials.json"' >> backend.tf
-          echo '  }' >> backend.tf
-          echo '  required_providers {' >> backend.tf
-          echo '     google = {' >> backend.tf
+          echo '  "${{ secrets.RIGHT_BRACKET }}"' >> backend.tf
+          echo '  required_providers "${{ secrets.LEFT_BRACKET }}"' >> backend.tf
+          echo '     google = "${{ secrets.LEFT_BRACKET }}"' >> backend.tf
           echo '       source  = "hashicorp/google"' >> backend.tf
           echo '       version = "4.66.0"' >> backend.tf
-          echo '     }' >> backend.tf
-          echo '  }' >> backend.tf
+          echo '     "${{ secrets.RIGHT_BRACKET }}"' >> backend.tf
+          echo '  "${{ secrets.RIGHT_BRACKET }}"' >> backend.tf
 
       - name: Create credentials file
         run: |
