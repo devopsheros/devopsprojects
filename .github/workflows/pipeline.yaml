@@ -23,21 +23,6 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v1
 
-      - name: Create Terraform backend configuration
-        run: |
-          cd terraform
-          echo '  backend "gcs" "${{ secrets.LEFT_BRACKET }}"' >> backend.tf
-          echo '    bucket  = "${{ secrets.BUCKETS_NAME }}"' >> backend.tf
-          echo '    prefix  = "${{ secrets.BUCKET_PREFIX }}"' >> backend.tf
-          echo '    credentials = "../credentials.json"' >> backend.tf
-          echo '  "${{ secrets.RIGHT_BRACKET }}"' >> backend.tf
-          echo '  required_providers "${{ secrets.LEFT_BRACKET }}"' >> backend.tf
-          echo '     google = "${{ secrets.LEFT_BRACKET }}"' >> backend.tf
-          echo '       source  = "hashicorp/google"' >> backend.tf
-          echo '       version = "4.66.0"' >> backend.tf
-          echo '     "${{ secrets.RIGHT_BRACKET }}"' >> backend.tf
-          echo '  "${{ secrets.RIGHT_BRACKET }}"' >> backend.tf
-
       - name: Create credentials file
         run: |
           echo "${{ secrets.GOOGLE_CREDENTIALS }}" > credentials.json
@@ -45,7 +30,7 @@ jobs:
       - name: Fetch remote state
         run: |
           cd terraform
-          terraform init -backend-config=backend.tf
+          terraform init -backend-config="bucket=${{ secrets.BUCKETS_NAME }}" -backend-config="prefix=${{ secrets.BUCKET_PREFIX}}" -backend-config="credentials=../credentials.json"
 
       - name: plan
         id: terraform_plan
