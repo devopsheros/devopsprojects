@@ -23,15 +23,22 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v1
 
+      - id: auth
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+
       - name: Create credentials file
         run: |
-          echo "${{ secrets.GOOGLE_CREDENTIALS }}" > credentials.json
-          cat $GOOGLE_APPLICATION_CREDENTIALS
+          gcloud iam service-accounts keys create key.json --iam-account=${{ secrets.SA_EMAIL }}
 
       - name: Fetch remote state
         run: |
           cd terraform
-          terraform init -backend-config="bucket=${{ secrets.BUCKETS_NAME }}" -backend-config="prefix=${{ secrets.BUCKET_PREFIX}}" -backend-config="credentials=/home/runner/work/devopsprojects/devopsprojects/credentials.json" -reconfigure
+          terraform init -backend-config="bucket=${{ secrets.BUCKETS_NAME }}" -backend-config="prefix=${{ secrets.BUCKET_PREFIX}}" -backend-config="credentials=/home/runner/work/devopsprojects/devopsprojects/key.json" -reconfigure
 
       - name: plan
         id: terraform_plan
