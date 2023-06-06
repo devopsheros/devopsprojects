@@ -38,6 +38,8 @@ jobs:
           echo ${{ steps.terraform_plan.outputs.stdout }}
           echo ${{ steps.terraform_plan.outputs.stderr }}
           echo ${{ steps.terraform_plan.outputs.exitcode }}
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
       - name: apply
         id: terraform_apply
