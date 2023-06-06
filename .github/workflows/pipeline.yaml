@@ -33,6 +33,7 @@ jobs:
           echo '    credentials = "../credentials.json"' >> backend.tf
           echo '  }' >> backend.tf
           echo '}' >> backend.tf
+          cat backend.tf
 
       - name: Create credentials file
         run: |
