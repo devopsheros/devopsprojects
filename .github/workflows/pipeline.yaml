@@ -43,7 +43,6 @@ jobs:
 
       - name: apply
         id: terraform_apply
-        if: github.ref == 'refs/heads/main' && github.event_name == 'main'
         run: |
           terraform apply  -var-file=values.tfvars -auto-approve
           echo ${{ steps.terraform_apply.outputs.stdout }}
@@ -69,4 +68,54 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: devopsheros137/flight-app:1.0.0
+          tags: devopsheros137/flight-app:1.0.1
+
+      - id: auth
+          uses: google-github-actions/auth@v1
+          with:
+            credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+
+      - name: Installing Helm
+        run: | 
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+          chmod 700 get_helm.sh
+          sh get_helm.sh
+
+      - name: Kubernetes
+        run: | 
+          gcloud config set project ${{ secrets.GCP_PROJECT }}
+          gcloud container clusters get-credentials ${{ secrets.CLUSTER_NAME }}
+          gcloud components install kubectl
+          
+          kubectl create secret generic creds --from-literal=username=postgres --from-literal=password=${{ secrets.POSTGRS_PASS }} --from-literal=host=postgres --from-literal=db=postgres
+          sleep 30
+          kubectl apply -f ./k8s/postgres.yaml
+          sleep 80
+          kubectl exec -it postgres-0 echo "port = 5432" >> /var/lib/postgresql/data/pgdata/postgresql.conf
+          sleep 15
+          kubectl apply -f ./k8s/flask.yaml
+          sleep 30
+        
+          
+          helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+          helm install my-ingress-nginx ingress-nginx/ingress-nginx --version 4.6.1
+          
+          helm repo add jetstack https://charts.jetstack.io
+          helm repo update
+          helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.12.0 --set installCRDs=true
+          
+          gcloud iam service-accounts create dns01-solver-pipe --display-name "dns01-solver"
+          gcloud projects add-iam-policy-binding devops-project-387209 --member serviceAccount:dns01-solver-pipe@devops-project-387209.iam.gserviceaccount.com  --role roles/dns.admin
+          gcloud iam service-accounts keys create key.json --iam-account dns01-solver-pipe@devops-project-387209.iam.gserviceaccount.com
+          
+          kubectl create secret generic dns-reslover-key --from-file=key.json=./key.json
+          sleep 30
+          
+          kubectl apply -f issuer.yaml
+          sleep 30
+          kubectl apply -f ingress.yaml
+          sleep 30
+            
