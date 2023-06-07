@@ -49,6 +49,8 @@ jobs:
           echo ${{ steps.terraform_apply.outputs.stdout }}
           echo ${{ steps.terraform_apply.outputs.stderr }}
           echo ${{ steps.terraform_apply.outputs.exitcode }}
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
