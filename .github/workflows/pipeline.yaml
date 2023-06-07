@@ -45,7 +45,7 @@ jobs:
         id: terraform_apply
         run: |
           cd terraform
-          terraform apply  -var-file=values.tfvars -auto-approve
+          terraform apply  -var-file=values.tfvars -var='key_path=${{ secrets.GOOGLE_CREDENTIALS }}' -auto-approve
           echo ${{ steps.terraform_apply.outputs.stdout }}
           echo ${{ steps.terraform_apply.outputs.stderr }}
           echo ${{ steps.terraform_apply.outputs.exitcode }}
