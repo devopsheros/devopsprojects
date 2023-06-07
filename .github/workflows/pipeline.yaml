@@ -71,8 +71,8 @@ jobs:
           tags: devopsheros137/flight-app:1.0.1
 
       - id: auth
-          uses: google-github-actions/auth@v1
-          with:
+        uses: google-github-actions/auth@v1
+        with:
             credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
       - name: Set up Cloud SDK
