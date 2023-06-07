@@ -44,6 +44,7 @@ jobs:
       - name: apply
         id: terraform_apply
         run: |
+          cd terraform
           terraform apply  -var-file=values.tfvars -auto-approve
           echo ${{ steps.terraform_apply.outputs.stdout }}
           echo ${{ steps.terraform_apply.outputs.stderr }}
