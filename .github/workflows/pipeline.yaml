@@ -34,7 +34,7 @@ jobs:
         id: terraform_plan
         run: |
           cd terraform
-          terraform plan -var-file=values.tfvars -var='key_path=${{ secrets.GOOGLE_CREDENTIALS }}' -lock=false
+          terraform plan -var-file=values.tfvars -var='key_path=${{ secrets.GOOGLE_CREDENTIALS }}'
           echo ${{ steps.terraform_plan.outputs.stdout }}
           echo ${{ steps.terraform_plan.outputs.stderr }}
           echo ${{ steps.terraform_plan.outputs.exitcode }}
@@ -45,7 +45,7 @@ jobs:
         id: terraform_apply
         run: |
           cd terraform
-          terraform apply  -var-file=values.tfvars -var='key_path=${{ secrets.GOOGLE_CREDENTIALS }}' -auto-approve
+          terraform apply  -var-file=values.tfvars -var='key_path=${{ secrets.GOOGLE_CREDENTIALS }}' -auto-approve -lock=false
           echo ${{ steps.terraform_apply.outputs.stdout }}
           echo ${{ steps.terraform_apply.outputs.stderr }}
           echo ${{ steps.terraform_apply.outputs.exitcode }}
