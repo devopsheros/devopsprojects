@@ -26,7 +26,7 @@ jobs:
       - name: init
         run: |
           cd terraform
-          terraform init -backend-config="bucket=${{ secrets.BUCKETS_NAME }}" -backend-config="prefix=${{ secrets.BUCKET_PREFIX}}" -reconfigure -lock=false
+          terraform init -backend-config="bucket=${{ secrets.BUCKETS_NAME }}" -backend-config="prefix=${{ secrets.BUCKET_PREFIX}}" -reconfigure
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
@@ -34,7 +34,7 @@ jobs:
         id: terraform_plan
         run: |
           cd terraform
-          terraform plan -var-file=values.tfvars -var='key_path=${{ secrets.GOOGLE_CREDENTIALS }}'
+          terraform plan -var-file=values.tfvars -var='key_path=${{ secrets.GOOGLE_CREDENTIALS }}' -lock=false
           echo ${{ steps.terraform_plan.outputs.stdout }}
           echo ${{ steps.terraform_plan.outputs.stderr }}
           echo ${{ steps.terraform_plan.outputs.exitcode }}
