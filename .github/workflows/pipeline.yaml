@@ -27,7 +27,7 @@ jobs:
         run: |
           cd terraform
           terraform init -backend-config="bucket=${{ secrets.BUCKETS_NAME }}" -backend-config="prefix=${{ secrets.BUCKET_PREFIX}}" -reconfigure
-          terraform force-unlock 1686177446698269 -force
+          terraform force-unlock 1686177446698269 
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
