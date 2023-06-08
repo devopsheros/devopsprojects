@@ -41,16 +41,16 @@ jobs:
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
-      - name: apply
-        id: terraform_apply
-        run: |
-          cd terraform
-          terraform apply  -var-file=values.tfvars -var='key_path=${{ secrets.GOOGLE_CREDENTIALS }}' -auto-approve -lock=false
-          echo ${{ steps.terraform_apply.outputs.stdout }}
-          echo ${{ steps.terraform_apply.outputs.stderr }}
-          echo ${{ steps.terraform_apply.outputs.exitcode }}
-        env:
-          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+      #- name: apply
+      #  id: terraform_apply
+      #  run: |
+      #    cd terraform
+      #    terraform apply  -var-file=values.tfvars -var='key_path=${{ secrets.GOOGLE_CREDENTIALS }}' -auto-approve -lock=false
+      #    echo ${{ steps.terraform_apply.outputs.stdout }}
+      #    echo ${{ steps.terraform_apply.outputs.stderr }}
+      #    echo ${{ steps.terraform_apply.outputs.exitcode }}
+      #  env:
+      #    GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -76,7 +76,7 @@ jobs:
       - id: auth
         uses: google-github-actions/auth@v1
         with:
-            credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+          credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
 
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
