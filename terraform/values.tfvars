@@ -1,6 +1,6 @@
 
 // gcp
-//key_path = "/home/runner/work/devopsprojects/devopsprojects/key.json"
+key_path = "C:\\Users\\Alon\\PycharmProjects\\project1\\venv\\key.json"
 gcp_project = "devops-project-387209"
 
 // k8s cluster

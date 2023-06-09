@@ -41,16 +41,16 @@ jobs:
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
-      #- name: apply
-      #  id: terraform_apply
-      #  run: |
-      #    cd terraform
-      #    terraform apply  -var-file=values.tfvars -var='key_path=${{ secrets.GOOGLE_CREDENTIALS }}' -auto-approve -lock=false
-      #    echo ${{ steps.terraform_apply.outputs.stdout }}
-      #    echo ${{ steps.terraform_apply.outputs.stderr }}
-      #    echo ${{ steps.terraform_apply.outputs.exitcode }}
-      #  env:
-      #    GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+      - name: apply
+        id: terraform_apply
+        run: |
+          cd terraform
+          terraform apply  -var-file=values.tfvars -var='key_path=${{ secrets.GOOGLE_CREDENTIALS }}' -auto-approve -lock=false
+          echo ${{ steps.terraform_apply.outputs.stdout }}
+          echo ${{ steps.terraform_apply.outputs.stderr }}
+          echo ${{ steps.terraform_apply.outputs.exitcode }}
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -91,12 +91,15 @@ jobs:
           gcloud container clusters get-credentials ${{ secrets.CLUSTER_NAME }} --zone us-central1-a
           gcloud components install kubectl
           
-          kubectl config view
           kubectl create secret generic creds --from-literal=username=postgres --from-literal=password=${{ secrets.POSTGRS_PASS }} --from-literal=host=postgres --from-literal=db=postgres
           sleep 30
           kubectl apply -f ./k8s/postgres.yaml
           sleep 80
-          kubectl exec -it postgres-0 echo "port = 5432" >> /var/lib/postgresql/data/pgdata/postgresql.conf
+          kubectl exec -it postgres-0 bash
+          sleep 5
+          echo "port = 5432" >> /var/lib/postgresql/data/pgdata/postgresql.conf
+          sleep 5
+          exit
           sleep 15
           kubectl apply -f ./k8s/postgres.yaml
           sleep 15
@@ -119,8 +122,8 @@ jobs:
           kubectl create secret generic dns-reslover-key --from-file=key.json=./key.json
           sleep 30
           
-          kubectl apply -f issuer.yaml
+          kubectl apply -f ./k8s/issuer.yaml
           sleep 50
-          kubectl apply -f ingress.yaml
+          kubectl apply -f ./k8s/ingress.yaml
           sleep 30
             
