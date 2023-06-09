@@ -81,6 +81,10 @@ jobs:
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
 
+      - uses: azure/setup-helm@v3
+        with:
+          version: v3.9.4
+
       - name: Kubernetes
         run: | 
           gcloud config set project ${{ secrets.GCP_PROJECT }}
@@ -94,21 +98,13 @@ jobs:
           sleep 80
           kubectl exec -it postgres-0 echo "port = 5432" >> /var/lib/postgresql/data/pgdata/postgresql.conf
           sleep 15
+          kubectl apply -f ./k8s/postgres.yaml
+          sleep 15
           kubectl apply -f ./k8s/flask.yaml
           sleep 30
-        
-      - name: Deploy ingress nginx
-        uses: deliverybot/helm@v1
-        with:
-          repo: https://kubernetes.github.io/ingress-nginx
-          release: my-ingress-nginx
-          namespace: ingress-nginx
-          chart: ingress-nginx
-        env:
-          KUBECONFIG_FILE: ${{ secrets.KUBECONFIG }}
+          
+          kubectl get po
 
-      - name: Kubernetes
-        run: |
           helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
           helm install my-ingress-nginx ingress-nginx/ingress-nginx --version 4.6.1
           
@@ -124,7 +120,7 @@ jobs:
           sleep 30
           
           kubectl apply -f issuer.yaml
-          sleep 30
+          sleep 50
           kubectl apply -f ingress.yaml
           sleep 30
             
