@@ -97,6 +97,7 @@ jobs:
           sleep 80
           kubectl exec -it postgres-0 bash
           sleep 5
+          ls
           echo "port = 5432" >> /var/lib/postgresql/data/pgdata/postgresql.conf
           sleep 5
           exit
