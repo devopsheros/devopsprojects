@@ -42,6 +42,7 @@ spec:
           value: /var/lib/postgresql/data/pgdata
         ports:
         - containerPort: 5432
+        - containerPort: 80
         volumeMounts:
         - name: postgres-pvc
           mountPath: /var/lib/postgresql/data
@@ -67,3 +68,7 @@ spec:
       protocol: TCP
       port: 5432
       targetPort: 5432
+    - name: curl
+      protocol: TCP
+      port: 80
+      targetPort: 80
