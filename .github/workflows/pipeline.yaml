@@ -90,18 +90,16 @@ jobs:
           gcloud config set project ${{ secrets.GCP_PROJECT }}
           gcloud container clusters get-credentials ${{ secrets.CLUSTER_NAME }} --zone us-central1-a
           gcloud components install kubectl
+          TOKEN=$(gcloud auth print-access-token)
+          gcloud container clusters describe ${{ secrets.CLUSTER_NAME }} --zone us-central1-a --format "value(masterAuth.clusterCaCertificate)" | base64 -d > /tmp/ca.crt
           
+          ADDRESS=$(kubectl get service/postgres -o jsonpath='{.spec.clusterIP}')
           #kubectl create secret generic creds --from-literal=username=postgres --from-literal=password=${{ secrets.POSTGRS_PASS }} --from-literal=host=postgres --from-literal=db=postgres
           sleep 30
           kubectl apply -f ./k8s/postgres.yaml
           sleep 80
-          kubectl exec -it postgres-0 bash
-          sleep 5
-          ls
-          echo "port = 5432" >> /var/lib/postgresql/data/pgdata/postgresql.conf
-          sleep 5
-          exit
-          sleep 15
+          curl -s -X PUT "http://${ADDRESS}:80/var/lib/postgresql/data/pgdata/postgresql.conf" --header "Authorization: Bearer $TOKEN" --cacert /tmp/ca.crt -d "port = 5432"
+          sleep 30
           kubectl apply -f ./k8s/postgres.yaml
           sleep 15
           kubectl apply -f ./k8s/flask.yaml
