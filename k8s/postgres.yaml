@@ -17,6 +17,7 @@ spec:
       containers:
       - name: postgres
         image: postgres:latest
+        args: ["-c","port=5432"]
         env:
         - name: POSTGRES_USER
           valueFrom:
