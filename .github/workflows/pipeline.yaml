@@ -108,10 +108,10 @@ jobs:
           
           #gcloud iam service-accounts create cert-manager-solver-pipe --display-name "cert-manager-solver-pipe"
           #gcloud projects add-iam-policy-binding devops-project-387209 --member serviceAccount:cert-manager-solver-pipe@devops-project-387209.iam.gserviceaccount.com  --role roles/dns.admin
-          gcloud iam service-accounts keys create key.json --iam-account cert-manager-solver-pipe@devops-project-387209.iam.gserviceaccount.com
+          #gcloud iam service-accounts keys create key.json --iam-account cert-manager-solver-pipe@devops-project-387209.iam.gserviceaccount.com
           
-          kubectl create secret generic dns-reslover-key --from-file=key.json=./key.json
-          sleep 30
+          #kubectl create secret generic dns-reslover-key --from-file=key.json=./key.json
+          #sleep 30
           
           kubectl apply -f ./k8s/issuer.yaml
           sleep 50
