@@ -95,7 +95,7 @@ jobs:
           sleep 30
           kubectl apply -f ./k8s/postgres.yaml
           sleep 80
-          kubectl apply -f ./k8s/postgres.yaml
+          kubectl apply -f ./k8s/flask.yaml
           sleep 30
           kubectl get po
 
