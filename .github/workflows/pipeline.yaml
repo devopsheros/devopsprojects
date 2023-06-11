@@ -87,9 +87,9 @@ jobs:
 
       - name: Kubernetes
         run: | 
-          #gcloud config set project ${{ secrets.GCP_PROJECT }}
-          #gcloud container clusters get-credentials ${{ secrets.CLUSTER_NAME }} --zone us-central1-a
-          #gcloud components install kubectl
+          gcloud config set project ${{ secrets.GCP_PROJECT }}
+          gcloud container clusters get-credentials ${{ secrets.CLUSTER_NAME }} --zone us-central1-a
+          gcloud components install kubectl
           
           #kubectl create secret generic creds --from-literal=username=postgres --from-literal=password=${{ secrets.POSTGRS_PASS }} --from-literal=host=postgres --from-literal=db=postgres
           #sleep 30
@@ -107,8 +107,8 @@ jobs:
           #helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.12.0 --set installCRDs=true
           
           #gcloud iam service-accounts create cert-manager-solver-pipe --display-name "cert-manager-solver-pipe"
-          gcloud projects add-iam-policy-binding devops-project-387209 --member serviceAccount:cert-manager-solver-pipe@devops-project-387209.iam.gserviceaccount.com  --role roles/dns.admin
-          gcloud iam service-accounts keys create key.json --iam-account cert-manager-solver-pipe@devops-project-387209.iam.gserviceaccount.com
+          #gcloud projects add-iam-policy-binding devops-project-387209 --member serviceAccount:cert-manager-solver-pipe@devops-project-387209.iam.gserviceaccount.com  --role roles/dns.admin
+          #gcloud iam service-accounts keys create key.json --iam-account cert-manager-solver-pipe@devops-project-387209.iam.gserviceaccount.com
           
           kubectl create secret generic dns-reslover-key --from-file=key.json=./key.json
           sleep 30
