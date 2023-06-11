@@ -41,16 +41,16 @@ jobs:
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
-      - name: apply
-        id: terraform_apply
-        run: |
-          cd terraform
-          terraform apply  -var-file=values.tfvars -var='key_path=${{ secrets.GOOGLE_CREDENTIALS }}' -auto-approve -lock=false
-          echo ${{ steps.terraform_apply.outputs.stdout }}
-          echo ${{ steps.terraform_apply.outputs.stderr }}
-          echo ${{ steps.terraform_apply.outputs.exitcode }}
-        env:
-          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+      #- name: apply
+      #  id: terraform_apply
+      #  run: |
+      #    cd terraform
+      #    terraform apply  -var-file=values.tfvars -var='key_path=${{ secrets.GOOGLE_CREDENTIALS }}' -auto-approve -lock=false
+      #    echo ${{ steps.terraform_apply.outputs.stdout }}
+      #    echo ${{ steps.terraform_apply.outputs.stderr }}
+      #    echo ${{ steps.terraform_apply.outputs.exitcode }}
+      #  env:
+      #    GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -87,26 +87,26 @@ jobs:
 
       - name: Kubernetes
         run: | 
-          gcloud config set project ${{ secrets.GCP_PROJECT }}
-          gcloud container clusters get-credentials ${{ secrets.CLUSTER_NAME }} --zone us-central1-a
-          gcloud components install kubectl
+          #gcloud config set project ${{ secrets.GCP_PROJECT }}
+          #gcloud container clusters get-credentials ${{ secrets.CLUSTER_NAME }} --zone us-central1-a
+          #gcloud components install kubectl
           
-          kubectl create secret generic creds --from-literal=username=postgres --from-literal=password=${{ secrets.POSTGRS_PASS }} --from-literal=host=postgres --from-literal=db=postgres
-          sleep 30
-          kubectl apply -f ./k8s/postgres.yaml
-          sleep 80
-          kubectl apply -f ./k8s/flask.yaml
-          sleep 30
-          kubectl get po
+          #kubectl create secret generic creds --from-literal=username=postgres --from-literal=password=${{ secrets.POSTGRS_PASS }} --from-literal=host=postgres --from-literal=db=postgres
+          #sleep 30
+          #kubectl apply -f ./k8s/postgres.yaml
+          #sleep 80
+          #kubectl apply -f ./k8s/flask.yaml
+          #sleep 30
+          #kubectl get po
 
-          helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-          helm install my-ingress-nginx ingress-nginx/ingress-nginx --version 4.6.1
+          #helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+          #helm install my-ingress-nginx ingress-nginx/ingress-nginx --version 4.6.1
           
-          helm repo add jetstack https://charts.jetstack.io
-          helm repo update
-          helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.12.0 --set installCRDs=true
+          #helm repo add jetstack https://charts.jetstack.io
+          #helm repo update
+          #helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.12.0 --set installCRDs=true
           
-          gcloud iam service-accounts create dns01-solver-pipe --display-name "dns01-solver"
+          gcloud iam service-accounts create dns01-solver-pipe --display-name "dns01-solver-pipe"
           gcloud projects add-iam-policy-binding devops-project-387209 --member serviceAccount:dns01-solver-pipe@devops-project-387209.iam.gserviceaccount.com  --role roles/dns.admin
           gcloud iam service-accounts keys create key.json --iam-account dns01-solver-pipe@devops-project-387209.iam.gserviceaccount.com
           
