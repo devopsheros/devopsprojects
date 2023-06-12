@@ -91,6 +91,7 @@ jobs:
           gcloud container clusters get-credentials ${{ secrets.CLUSTER_NAME }} --zone us-central1-a
           gcloud components install kubectl
           STATIC_IP=$(gcloud compute addresses describe k8s-lb --region=us-central1 --format "value(address)")
+          gcloud dns record-sets update devopsheros.com --zone=flight-app-zone --type=NS --rrdatas=ns-cloud-a1.googledomains.com.,ns-cloud-a2.googledomains.com.,ns-cloud-a3.googledomains.com.,ns-cloud-a4.googledomains.com. --ttl=300
           
           kubectl create secret generic creds --from-literal=username=postgres --from-literal=password=${{ secrets.POSTGRS_PASS }} --from-literal=host=postgres --from-literal=db=postgres
           sleep 30
