@@ -116,18 +116,18 @@ jobs:
 
       - name: Wait for changing nameservers
         uses: trstringer/manual-approval@v1
-          with:
-            approvers: devopsheros
-            minimum-approvals: 1
-            issue-title: "Pause workflow"
-            issue-body: "please change the nameservers if necessary"
-            exclude-workflow-initiator-as-approver: false
-            additional-approved-words: 'Aprroved'
-            additional-denied-words: 'Denied'
+        with:
+          approvers: devopsheros
+          minimum-approvals: 1
+          issue-title: "Pause workflow"
+          issue-body: "please change the nameservers if necessary"
+          exclude-workflow-initiator-as-approver: false
+          additional-approved-words: 'Aprroved'
+          additional-denied-words: 'Denied'
 
       - name: Expose app
         run: |
-          sleep 240
           kubectl apply -f ./k8s/issuer.yaml
+          sleep 240
           kubectl apply -f ./k8s/ingress.yaml
             
