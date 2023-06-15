@@ -9,11 +9,11 @@ on:
     inputs:
       branches:
         description: 'Branch to deploy'
-        required: true
+        required: false
 
 jobs:
   infrastructure:
-    name: 'terraform'
+    name: pipeline
     runs-on: ubuntu-latest
 
     steps:
@@ -81,11 +81,12 @@ jobs:
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
 
-      - uses: azure/setup-helm@v3
+      - name: Install Helm
+        uses: azure/setup-helm@v3
         with:
           version: v3.9.4
 
-      - name: Kubernetes
+      - name: Deploy application
         run: | 
           gcloud config set project ${{ secrets.GCP_PROJECT }}
           gcloud container clusters get-credentials ${{ secrets.CLUSTER_NAME }} --zone us-central1-a
@@ -112,7 +113,21 @@ jobs:
           gcloud iam service-accounts keys create key.json --iam-account cert-manager-solver-pipe@devops-project-387209.iam.gserviceaccount.com
           
           kubectl create secret generic dns-reslover-key --from-file=key.json=./key.json
-          sleep 30
-          
-      
+
+      - name: Wait for changing nameservers
+        uses: trstringer/manual-approval@v1
+          with:
+            approvers: devopsheros
+            minimum-approvals: 1
+            issue-title: "Pause workflow"
+            issue-body: "please change the nameservers if necessary"
+            exclude-workflow-initiator-as-approver: false
+            additional-approved-words: 'Aprroved'
+            additional-denied-words: 'Denied'
+
+      - name: Expose app
+        run: |
+          sleep 240
+          kubectl apply -f ./k8s/issuer.yaml
+          kubectl apply -f ./k8s/ingress.yaml
             
